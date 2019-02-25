@@ -107,10 +107,11 @@ def check_date(path):
 def section_analysis(path):
 	good_sectoins = ['.data', '.text', '.code', '.reloc', '.idata', '.edata', '.rdata', '.bss', '.rsrc']
 	pe=pefile.PE(path)
+	suspicious_str=""
 	number_of_section = pe.FILE_HEADER.NumberOfSections
 	if number_of_section < 1 or number_of_section > 9:
 		print("Suspicious No.of Sections{} ".format(number_of_section))
-	#print("{} {} {} {} {} {}".format("Section VirtualAddress VirtualSize SizeofRawData Sections_MD5_Hash Section_Entropy".split()))
+		suspicious_str=suspicious_str+"Suspicious No.of Sections{} ".format(number_of_section)
 	h_l_entropy = False
 	suspicious_size_of_raw_data = False
 	virtual_size = []
@@ -131,12 +132,25 @@ def section_analysis(path):
 			if section.SizeOfRawData == 0 and section.Misc_VirtualSize > 0:
 				suspicious_size_of_raw_data = True
 				virtual_size.append((section.Name.decode(errors='ignore').strip(), section.Misc_VirtualSize))
+		if virtual_size:
+			for n, m in virtual_size:
+				print('SUSPICIOUS size of the section "{}" when stored in memory - {}'.format(n,m))
+				suspicious_str = suspicious_str + 'SUSPICIOUS size of the section "{}" when stored in memory - {}'.format(n,m)
+		if h_l_entropy:
+			print("Very high or very low entropy means that file/section is compressed or encrypted since truly random data is not common.")
+			suspicious_str = suspicious_str +"Very high or very low entropy means that file/section is compressed or encrypted since truly random data is not common."
+		if suspicious_size_of_raw_data:
+			print("Suspicious size of the raw data - 0\n")
+			suspicious_str = suspicious_str + "Suspicious size of the raw data raw data is Zero and Virtual Size is more than Zero"
+		bad_sections = [bad for bad in section_names if bad not in good_sectoins]
+		
 		section_info = {
 		"Section": sec_name,
 		"VirtualAddress": hex(section.VirtualAddress),
 		"VirtualSize": section.Misc_VirtualSize,
 		"SizeofRawData": section.SizeOfRawData,
-		"Entropy": entropy
+		"Entropy": entropy,
+		"msg": suspicious_str
 		}
 		sections[sec_name] = section_info
 	print(sections)
