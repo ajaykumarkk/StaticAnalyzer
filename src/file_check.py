@@ -105,13 +105,8 @@ def check_date(path):
 
 
 def section_analysis(path):
-	good_sectoins = ['.data', '.text', '.code', '.reloc', '.idata', '.edata', '.rdata', '.bss', '.rsrc']
 	pe=pefile.PE(path)
 	suspicious_str=""
-	number_of_section = pe.FILE_HEADER.NumberOfSections
-	if number_of_section < 1 or number_of_section > 9:
-		print("Suspicious No.of Sections{} ".format(number_of_section))
-		suspicious_str=suspicious_str+"Suspicious No.of Sections{} ".format(number_of_section)
 	h_l_entropy = False
 	suspicious_size_of_raw_data = False
 	virtual_size = []
@@ -121,10 +116,8 @@ def section_analysis(path):
 		sec_name = section.Name.strip(b"\x00").decode(errors='ignore').strip()
 		section_names.append(sec_name)
 		entropy = section.get_entropy()
-		for_section = False
 		if entropy < 1 or entropy > 7:
 			h_l_entropy = True
-			for_section = True
 		try:
 			if section.Misc_VirtualSize / section.SizeOfRawData > 10:
 				virtual_size.append((sec_name, section.Misc_VirtualSize))
@@ -134,16 +127,14 @@ def section_analysis(path):
 				virtual_size.append((section.Name.decode(errors='ignore').strip(), section.Misc_VirtualSize))
 		if virtual_size:
 			for n, m in virtual_size:
-				print('SUSPICIOUS size of the section "{}" when stored in memory - {}'.format(n,m))
+				#print('SUSPICIOUS size of the section "{}" when stored in memory - {}'.format(n,m))
 				suspicious_str = suspicious_str + 'SUSPICIOUS size of the section "{}" when stored in memory - {}'.format(n,m)
 		if h_l_entropy:
-			print("Very high or very low entropy means that file/section is compressed or encrypted since truly random data is not common.")
+			#print("Very high or very low entropy means that file/section is compressed or encrypted since truly random data is not common.")
 			suspicious_str = suspicious_str +"Very high or very low entropy means that file/section is compressed or encrypted since truly random data is not common."
 		if suspicious_size_of_raw_data:
-			print("Suspicious size of the raw data - 0\n")
+			#print("Suspicious size of the raw data - 0\n")
 			suspicious_str = suspicious_str + "Suspicious size of the raw data raw data is Zero and Virtual Size is more than Zero"
-		bad_sections = [bad for bad in section_names if bad not in good_sectoins]
-		
 		section_info = {
 		"Section": sec_name,
 		"VirtualAddress": hex(section.VirtualAddress),
@@ -153,4 +144,4 @@ def section_analysis(path):
 		"msg": suspicious_str
 		}
 		sections[sec_name] = section_info
-	print(sections)
+	return sections
