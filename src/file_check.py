@@ -106,13 +106,14 @@ def check_date(path):
 
 def section_analysis(path):
 	pe=pefile.PE(path)
-	suspicious_str=""
 	h_l_entropy = False
 	suspicious_size_of_raw_data = False
 	virtual_size = []
 	section_names = []
 	sections = {}
 	for section in pe.sections:
+		suspicious_str = ""
+		virtual_size = []
 		sec_name = section.Name.strip(b"\x00").decode(errors='ignore').strip()
 		section_names.append(sec_name)
 		entropy = section.get_entropy()
@@ -127,13 +128,10 @@ def section_analysis(path):
 				virtual_size.append((section.Name.decode(errors='ignore').strip(), section.Misc_VirtualSize))
 		if virtual_size:
 			for n, m in virtual_size:
-				#print('SUSPICIOUS size of the section "{}" when stored in memory - {}'.format(n,m))
 				suspicious_str = suspicious_str + 'SUSPICIOUS size of the section "{}" when stored in memory - {}'.format(n,m)
 		if h_l_entropy:
-			#print("Very high or very low entropy means that file/section is compressed or encrypted since truly random data is not common.")
 			suspicious_str = suspicious_str +"Very high or very low entropy means that file/section is compressed or encrypted since truly random data is not common."
 		if suspicious_size_of_raw_data:
-			#print("Suspicious size of the raw data - 0\n")
 			suspicious_str = suspicious_str + "Suspicious size of the raw data raw data is Zero and Virtual Size is more than Zero"
 		section_info = {
 		"Section": sec_name,

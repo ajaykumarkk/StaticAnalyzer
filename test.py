@@ -6,7 +6,7 @@ import config
 from src.file_check import *
 
 
-path = "D:\\SRC\\staticanalyzer\\src\\VegaSetup64.exe"
+path = "D:\\SRC\\staticanalyzer\\src\\u.exe"
 
 ''' STRINGS
 extractor = URLExtract()
@@ -17,9 +17,9 @@ out = out.decode("utf-8").split('\n')
 for url in iocextract.extract_urls(str(out)):
 	print(extractor.find_urls(url))
 '''
-
-'''IMPORT FUNC CHECK
-d=getsections("D:\\SRC\\staticanalyzer\\src\\VegaSetup64.exe")
+'''
+#IMPORT FUNC CHECK
+d=getsectionfunc("D:\\SRC\\staticanalyzer\\src\\u.exe")
 for t in d.items():
 	for fun in t[1]:
 		try:
@@ -27,7 +27,8 @@ for t in d.items():
 		except:
 			pass
 '''
-'''Entropy
+
+'''#Entropy
 with open(path, 'rb') as pe_file:
 	pe_entropy = data_entropy(pe_file.read())
 	
@@ -36,8 +37,22 @@ if low_high_entropy:
 	print("Possibly Packed")
 '''
 
+'''#section wise anlysis
 section_data=section_analysis(path)
-print(section_data['.data'])
+for i in section_data.keys():
+	print(section_data[i])
+'''
+
+'''#get packer details from section names
+section_names = []
+pe=pefile.PE(path)
+for i in pe.sections:
+	section_names.append(i.Name.strip(b"\x00").decode(errors='ignore').strip())
+	try:
+		print(config.packer_section_Details[i])
+	except:
+		pass
+'''
 
 '''
 good_sections = ['.data', '.text', '.code', '.reloc', '.idata', '.edata', '.rdata', '.bss', '.rsrc']
@@ -49,3 +64,4 @@ section_names=section_data.keys()
 bad_sections = [bad for bad in section_names if bad not in good_sections]
 print(bad_sections)
 '''
+
