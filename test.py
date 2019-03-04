@@ -4,8 +4,13 @@ import re
 from urlextract import URLExtract
 import config
 from src.file_check import *
+import peutils,sys,os
 
-
+'''
+with open(USERDB, 'rt') as f:
+    sig_data = f.read()
+signatures = peutils.SignatureDatabase(data=sig_data)
+'''
 path = "D:\\SRC\\staticanalyzer\\src\\u.exe"
 
 ''' STRINGS
@@ -37,11 +42,11 @@ if low_high_entropy:
 	print("Possibly Packed")
 '''
 
-'''#section wise anlysis
+#section wise anlysis
 section_data=section_analysis(path)
 for i in section_data.keys():
 	print(section_data[i])
-'''
+''''''
 
 '''#get packer details from section names
 section_names = []

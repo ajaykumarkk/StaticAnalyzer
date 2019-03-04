@@ -108,7 +108,6 @@ def section_analysis(path):
 	pe=pefile.PE(path)
 	h_l_entropy = False
 	suspicious_size_of_raw_data = False
-	virtual_size = []
 	section_names = []
 	sections = {}
 	for section in pe.sections:
