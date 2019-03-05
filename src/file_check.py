@@ -103,7 +103,6 @@ def check_date(path):
 	if pe_year > this_year or pe_year < 2000:
 		return "[SUSPICIOUS COMPILATION DATE] - {}".format(pe_year)
 
-
 def section_analysis(path):
 	pe=pefile.PE(path)
 	h_l_entropy = False

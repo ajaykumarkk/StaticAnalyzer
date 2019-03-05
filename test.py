@@ -111,5 +111,29 @@ if pe.OPTIONAL_HEADER.NumberOfRvaAndSizes != 16:
 # Loader flags check
 if pe.OPTIONAL_HEADER.LoaderFlags != 0:
 	print("[*] Optional Header LoaderFlags field is valued illegal")
+
+#Point to symbol table
+if pe.FILE_HEADER.PointerToSymbolTable > 0:
+	print("[*] File contains some debug information, in majority of regular PE files, should not contain debug information")
+
+#overlaydata check
+overlayOffset = pe.get_overlay_data_start_offset()
+if overlayOffset != None:
+	print("Overlay data is often associated with malware")
+	print(' Start offset: 0x%08x' % overlayOffset)
+	overlaySize = len(raw[overlayOffset:])
+	raw= pe.write()
+	print(' Size: 0x%08x %s %.2f%%' % (overlaySize, self.NumberOfBytesHumanRepresentation(overlaySize), float(overlaySize) / float(len(raw)) * 100.0))
+	
+#malicious flags check
+	if pe.FILE_HEADER.IMAGE_FILE_BYTES_REVERSED_LO:
+		print("Little endian: LSB precedes MSB in memory, deprecated and should be zero.")
+	if pe.FILE_HEADER.IMAGE_FILE_BYTES_REVERSED_HI:
+		print("Big endian: MSB precedes LSB in memory, deprecated and should be zero.")
+	if pe.FILE_HEADER.IMAGE_FILE_RELOCS_STRIPPED:
+		print("This indicates that the file does not contain base relocations and must therefore be loaded at its preferred base address.\nFlag has the effect of disabling Address Space Layout Randomization(ASLR) for the process.")
+
+
+
 '''
 
