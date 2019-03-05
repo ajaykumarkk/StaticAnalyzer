@@ -110,7 +110,11 @@ def section_analysis(path):
 	suspicious_size_of_raw_data = False
 	section_names = []
 	sections = {}
-	for section in pe.sections:
+	nsec = pe.FILE_HEADER.NumberOfSections
+	for i in range(0,nsec):
+		if i == nsec:
+			break
+		section = pe.sections[i]
 		suspicious_str = ""
 		virtual_size = []
 		sec_name = section.Name.strip(b"\x00").decode(errors='ignore').strip()
@@ -132,6 +136,11 @@ def section_analysis(path):
 			suspicious_str = suspicious_str +"Very high or very low entropy means that file/section is compressed or encrypted since truly random data is not common."
 		if suspicious_size_of_raw_data:
 			suspicious_str = suspicious_str + "Suspicious size of the raw data raw data is Zero and Virtual Size is more than Zero"
+		if i != nsec -1:
+			nextp = pe.sections[i].SizeOfRawData + pe.sections[i].PointerToRawData
+			currp = pe.sections[i + 1].PointerToRawData
+			if nextp != currp:
+				suspicious_str = suspicious_str + "The Size Of Raw data is valued illegal! Binary might crash your disassembler/debugger"
 		section_info = {
 		"Section": sec_name,
 		"VirtualAddress": hex(section.VirtualAddress),
@@ -142,3 +151,10 @@ def section_analysis(path):
 		}
 		sections[sec_name] = section_info
 	return sections
+
+def getsectionnames(path):
+	pe = pefile.PE(path)
+	section_names = []
+	for i in pe.sections:
+		section_names.append(i.Name.strip(b"\x00").decode(errors='ignore').strip())
+	return section_names

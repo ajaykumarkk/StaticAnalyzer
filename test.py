@@ -6,12 +6,18 @@ import config
 from src.file_check import *
 import peutils,sys,os
 
+path = "D:\\SRC\\staticanalyzer\\src\\u.exe"
+USERDB = "D:\\SRC\\staticanalyzer\\src\\userdb.txt"
+
 '''
 with open(USERDB, 'rt') as f:
-    sig_data = f.read()
+	sig_data = f.read()
 signatures = peutils.SignatureDatabase(data=sig_data)
+pe = pefile.PE(path)
+matches = signatures.match_all(pe, ep_only = True)
+print(matches)
 '''
-path = "D:\\SRC\\staticanalyzer\\src\\u.exe"
+
 
 ''' STRINGS
 extractor = URLExtract()
@@ -40,15 +46,19 @@ with open(path, 'rb') as pe_file:
 low_high_entropy = pe_entropy < 1 or pe_entropy > 7
 if low_high_entropy:
 	print("Possibly Packed")
+	
+p = peutils.is_probably_packed(pe)
+print(p)
 '''
 
+'''
 #section wise anlysis
 section_data=section_analysis(path)
 for i in section_data.keys():
 	print(section_data[i])
-''''''
-
-'''#get packer details from section names
+'''
+'''
+#get packer details from section names
 section_names = []
 pe=pefile.PE(path)
 for i in pe.sections:
@@ -57,8 +67,9 @@ for i in pe.sections:
 		print(config.packer_section_Details[i])
 	except:
 		pass
-'''
 
+print(section_names)
+'''
 '''
 good_sections = ['.data', '.text', '.code', '.reloc', '.idata', '.edata', '.rdata', '.bss', '.rsrc']
 number_of_section = pe.FILE_HEADER.NumberOfSections
@@ -68,5 +79,37 @@ if number_of_section < 1 or number_of_section > 9:
 section_names=section_data.keys()
 bad_sections = [bad for bad in section_names if bad not in good_sections]
 print(bad_sections)
+'''
+'''
+# Non-Ascii or empty section name check
+section_names = getsectionnames(path)
+for sec in section_names:
+	if not re.match("^[.A-Za-z][a-zA-Z]+",sec):
+		print("[*] Non-ascii or empty section names detected")
+
+# Size of optional header check
+pe=pefile.PE(path)
+if pe.FILE_HEADER.SizeOfOptionalHeader != 224:
+	print("[*] Illegal size of optional Header")
+
+# Zero checksum check
+if pe.OPTIONAL_HEADER.CheckSum == 0:
+	print("[*] Header Checksum is zero!")
+
+# Entry point check
+enaddr = pe.OPTIONAL_HEADER.AddressOfEntryPoint
+vbsecaddr = pe.sections[0].VirtualAddress
+ensecaddr = pe.sections[0].Misc_VirtualSize
+entaddr = vbsecaddr + ensecaddr
+if enaddr > entaddr:
+	print("[*] Enrty point is outside the 1st(.code) section! Binary is possibly packed")
+
+# Numeber of directories check
+if pe.OPTIONAL_HEADER.NumberOfRvaAndSizes != 16:
+	print("[*] Optional Header NumberOfRvaAndSizes field is valued illegal")
+
+# Loader flags check
+if pe.OPTIONAL_HEADER.LoaderFlags != 0:
+	print("[*] Optional Header LoaderFlags field is valued illegal")
 '''
 
