@@ -19,15 +19,13 @@ print(matches)
 '''
 
 
-''' STRINGS
 extractor = URLExtract()
-
-out = subprocess.check_output(['strings64.exe','-a' ,'npp.7.6.Installer.exe'])
+out = subprocess.check_output(['src//strings64.exe','-a','src//npp.7.6.Installer.exe'])
 out = out.decode("utf-8").split('\n')
-#print(str(out))
 for url in iocextract.extract_urls(str(out)):
-	print(extractor.find_urls(url))
-'''
+	print(str(extractor.find_urls(url)))
+'''''' #STRINGS
+
 '''
 #IMPORT FUNC CHECK
 d=getsectionfunc("D:\\SRC\\staticanalyzer\\src\\u.exe")
@@ -132,8 +130,6 @@ if overlayOffset != None:
 		print("Big endian: MSB precedes LSB in memory, deprecated and should be zero.")
 	if pe.FILE_HEADER.IMAGE_FILE_RELOCS_STRIPPED:
 		print("This indicates that the file does not contain base relocations and must therefore be loaded at its preferred base address.\nFlag has the effect of disabling Address Space Layout Randomization(ASLR) for the process.")
-
-
 
 '''
 

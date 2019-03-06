@@ -1,3 +1,4 @@
+import re
 alerts = {'OpenProcess': "Opens a handle to another process running on the system. This handle can be used to read and write to the other process memory or to inject code into the other process.",
             'VirtualAllocEx': "A memory-allocation routine that can allocate memory in a remote process. Malware sometimes uses VirtualAllocEx as part of process injection",
             'WriteProcessMemory': "Used to write data to a remote process. Malware uses WriteProcessMemory as part of process injection.",
@@ -194,3 +195,15 @@ packer_section_Details={
     '.yP':'Y0da Protector',
     '.y0da':'Y0da Protector'
 }
+
+ipv4_pattern = re.compile(r'((([01]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])[ (\[]?(\.|dot)[ )\]]?){3}([01]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5]))')
+
+email_pattern = re.compile(r'(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)')
+
+chars = b"A-Za-z0-9!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~ "
+
+shortest_run = 4
+
+regexp = '[{}]{{{},}}'.format(chars.decode(), shortest_run).encode()
+
+pattern = re.compile(regexp)
