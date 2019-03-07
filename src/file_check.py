@@ -7,6 +7,8 @@ import numbers
 import time
 from urlextract import URLExtract
 import iocextract
+from urllib.parse import urlparse
+
 
 def old_div(a, b):
 	"""
@@ -183,3 +185,22 @@ def extractIOC(path):
 	for email in iocextract.extract_emails(str(out),refang=True):
 		emails.append(str(email).replace("\\r", ""))
 	return (extract_url,ipv4,ipv6,emails)
+
+def getmaldomains():
+	urlbl = open("D:\\SRC\\staticanalyzer\\src\\RW_URLBL.txt").read().strip().split("\n")
+	dmbl = open("D:\\SRC\\staticanalyzer\\src\\RW_DOMBL.txt").read().strip().split("\n")
+	domains=open("D:\\SRC\\staticanalyzer\\src\\justdomains.txt").read().strip().split("\n")
+	list_of_mal_domains = []
+	for n in dmbl:
+		if n and not n.startswith("#"):
+			list_of_mal_domains.append(n.strip())
+	list_of_mal_urls = []
+	for n in urlbl:
+		if n and not n.startswith("#"):
+			n = urlparse(n).netloc
+			if n.startswith("www."):
+				n = ".".join(n.split(".")[1:])
+			list_of_mal_urls.append(n)
+	#print(list_of_mal_domains)
+	#print(list_of_mal_urls)
+	return list(set(list_of_mal_domains+ list_of_mal_urls + domains))
