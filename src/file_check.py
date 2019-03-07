@@ -5,7 +5,8 @@ import array
 import math
 import numbers
 import time
-
+from urlextract import URLExtract
+import iocextract
 
 def old_div(a, b):
 	"""
@@ -157,3 +158,28 @@ def getsectionnames(path):
 	for i in pe.sections:
 		section_names.append(i.Name.strip(b"\x00").decode(errors='ignore').strip())
 	return section_names
+
+def extractIOC(path):
+	extractor = URLExtract()
+	out = subprocess.check_output(['src//strings64.exe', '-a', path])
+	out = out.decode("utf-8").split('\n')
+	extract_url = []
+	ipv4 = []
+	ipv6=[]
+	emails=[]
+	for url in iocextract.extract_urls(str(out), refang=True, strip=True):
+		n = extractor.find_urls(url)
+		try:
+			n= n[0]
+			n = str(n).replace("\\r", "")
+			extract_url.append(n)
+		except:
+			pass
+	extract_url = list(set(extract_url))
+	for ip4 in iocextract.extract_ipv4s(str(out), refang=True):
+		ipv4.append(ip4)
+	for ip6 in iocextract.extract_ipv6s(str(out)):
+		ipv6.append(ip6)
+	for email in iocextract.extract_emails(str(out),refang=True):
+		emails.append(str(email).replace("\\r", ""))
+	return (extract_url,ipv4,ipv6,emails)

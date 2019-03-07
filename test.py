@@ -7,7 +7,7 @@ from src.file_check import *
 import peutils,sys,os
 from urllib.parse import urlparse
 
-path = "D:\\SRC\\staticanalyzer\\src\\u.exe"
+path = "D:\\SRC\\staticanalyzer\\samples\\npp.7.6.Installer.exe"
 USERDB = "D:\\SRC\\staticanalyzer\\src\\userdb.txt"
 
 '''
@@ -20,19 +20,12 @@ print(matches)
 '''
 
 
-extractor = URLExtract()
-out = subprocess.check_output(['src//strings64.exe','-a','src//npp.7.6.Installer.exe'])
-out = out.decode("utf-8").split('\n')
-extract_url=[]
-for url in iocextract.extract_urls(str(out)):
-	n=extractor.find_urls(url)
-	n=str(n).rstrip().replace("\\\\r","")
-	extract_url.append(n)
-print("--")
-for i in set(extract_url):
-	print(i)
-extract_url = set(extract_url)
+extract_url,ipv4,ipv6,emails = extractIOC(path)
 
+print(extract_url)
+print(ipv4)
+print(ipv6)
+print(emails)
 
 
 ''' #STRINGS'''
