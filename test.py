@@ -19,35 +19,21 @@ matches = signatures.match_all(pe, ep_only = True)
 print(matches)
 '''
 
-f=open("src//RW_DOMBL.txt")
-list_of_dom=f.read().strip().split("\n")
-f=open("src//RW_URLBL.txt")
-list_of_url=f.read().strip().split("\n")
+
 extractor = URLExtract()
 out = subprocess.check_output(['src//strings64.exe','-a','src//npp.7.6.Installer.exe'])
 out = out.decode("utf-8").split('\n')
-
+extract_url=[]
 for url in iocextract.extract_urls(str(out)):
 	n=extractor.find_urls(url)
-	print(n)
+	n=str(n).rstrip().replace("\\\\r","")
+	extract_url.append(n)
+print("--")
+for i in set(extract_url):
+	print(i)
+extract_url = set(extract_url)
 
-f1=open(path,"rb")
-try:
-	matches=config.pattern.findall(f1.read())
-except Exception as e:
-	print(e)
-print(matches)
-print(len(matches))
 
-list_of_mal_urls = []
-
-for n in list_of_url:
-	if n and not n.startswith("#"):
-		n = urlparse(n).netloc
-		if n.startswith("www."):
-			n = ".".join(n.split(".")[1:])
-		list_of_mal_urls.append(n)
-print(list_of_mal_urls)
 
 ''' #STRINGS'''
 
