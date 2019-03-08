@@ -28,12 +28,14 @@ print(ipv6)
 print(emails)
 
 
-
+"""
 maldomainslist = getmaldomains()
 print("Total Malware domains Loaded : "+str(len(maldomainslist)))
 for i in extract_url:
 	if urlparse(i).netloc in maldomainslist:
 		print("Known Malicious Domain : "+i)
+
+"""
 
 ''' #STRINGS'''
 
