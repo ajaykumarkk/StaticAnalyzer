@@ -59,9 +59,10 @@ def check32bit(path):
 
 
 def check_dll(path):
-	print(check32bit(path))
 	if check32bit(path):
+		print("32-Bit")
 		out = execute_command('src\\Siofra32.exe --mode file-scan -f "'+path+'" --enum-dependency --dll-hijack')
+		#print(out)
 	else:
 		print("64-Bit")
 		out = execute_command('src\\Siofra64.exe --mode file-scan -f "'+path+'" --enum-dependency --dll-hijack')

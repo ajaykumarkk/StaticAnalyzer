@@ -8,19 +8,20 @@ import peutils,sys,os
 from urllib.parse import urlparse
 from src.ip_reputaioncheck import *
 
-path = "D:\\SRC\\staticanalyzer\\samples\\npp.7.6.Installer.exe"
+path = "D:\\SRC\\staticanalyzer\\samples\\strings64.exe"
 USERDB = "D:\\SRC\\staticanalyzer\\src\\userdb.txt"
 
-'''
+print("--------- PEID(signature Matching) ----------")
 with open(USERDB, 'rt') as f:
 	sig_data = f.read()
 signatures = peutils.SignatureDatabase(data=sig_data)
 pe = pefile.PE(path)
 matches = signatures.match_all(pe, ep_only = True)
 print(matches)
-'''
 
-''' #STRINGS
+print("--------- strings  ----------")
+
+#STRINGS
 extract_url,ipv4,ipv6,emails = extractIOC(path)
 
 print(extract_url)
@@ -28,7 +29,7 @@ print(ipv4)
 print(ipv6)
 print(emails)
 
-
+print("--------- ipv4 reputaion check  ----------")
 
 maldomainslist = getmaldomains()
 print("Total Malware domains Loaded : "+str(len(maldomainslist)))
@@ -38,9 +39,9 @@ for i in extract_url:
 
 print(ipv4reputation_list(ipv4))
 
-'''
 
-'''
+
+print("--------- Import function check  ----------")
 #IMPORT FUNC CHECK
 d=getsectionfunc("D:\\SRC\\staticanalyzer\\src\\u.exe")
 for t in d.items():
@@ -49,9 +50,9 @@ for t in d.items():
 			print(t[0]+"-->"+fun+" : "+config.alerts[fun])
 		except:
 			pass
-'''
 
-'''#Entropy
+print("--------- Entropy  ----------")
+#Entropy
 with open(path, 'rb') as pe_file:
 	pe_entropy = data_entropy(pe_file.read())
 	
@@ -60,21 +61,22 @@ if low_high_entropy:
 	print("Possibly Packed")
 	
 p = peutils.is_probably_packed(pe)
-print(p)
-'''
+print("is packed :"+p)
 
-'''
+
+print("--------- Section wise analysis  ----------")
 #section wise anlysis
 section_data=section_analysis(path)
 for i in section_data.keys():
 	print(section_data[i])
-'''
 
+
+print("--------- get packer details from section names  ----------")
 
 #get packer details from section names
 section_names = []
 pe=pefile.PE(path)
-'''
+
 for i in pe.sections:
 	section_names.append(i.Name.strip(b"\x00").decode(errors='ignore').strip())
 	try:
@@ -82,20 +84,19 @@ for i in pe.sections:
 	except:
 		pass
 
-print(section_names)
-'''
-'''
+
+print("--------- Uknown sections  ----------")
+
 good_sections = ['.data', '.text', '.code', '.reloc', '.idata', '.edata', '.rdata', '.bss', '.rsrc']
 number_of_section = pe.FILE_HEADER.NumberOfSections
 if number_of_section < 1 or number_of_section > 9:
 	print("Suspicious No.of Sections{} ".format(number_of_section))
-	suspicious_str=suspicious_str+"Suspicious No.of Sections{} ".format(number_of_section)
 section_names=section_data.keys()
 bad_sections = [bad for bad in section_names if bad not in good_sections]
 print(bad_sections)
-'''
 
-'''
+
+
 # Non-Ascii or empty section name check
 section_names = getsectionnames(path)
 for sec in section_names:
@@ -150,12 +151,12 @@ if pe.FILE_HEADER.IMAGE_FILE_BYTES_REVERSED_HI:
 	print("Big endian: MSB precedes LSB in memory, deprecated and should be zero.")
 if pe.FILE_HEADER.IMAGE_FILE_RELOCS_STRIPPED:
 	print("This indicates that the file does not contain base relocations and must therefore be loaded at its preferred base address.\nFlag has the effect of disabling Address Space Layout Randomization(ASLR) for the process.")
-'''
 
 
 print(pe.OPTIONAL_HEADER.SizeOfUninitializedData)
 if pe.OPTIONAL_HEADER.SizeOfUninitializedData > 1:
 	print("Possible malicious file has uninitialized data")
 
+print("--------- Dll vulnerabilities check  ----------")
 check_dll(path)
 
