@@ -204,3 +204,14 @@ def getmaldomains():
 	#print(list_of_mal_domains)
 	#print(list_of_mal_urls)
 	return list(set(list_of_mal_domains+ list_of_mal_urls + domains))
+
+
+def NumberOfBytesHumanRepresentation(value):
+	if value <= 1024:
+		return '%s bytes' % value
+	elif value < 1024 * 1024:
+		return '%.1f KB' % (float(value) / 1024.0)
+	elif value < 1024 * 1024 * 1024:
+		return '%.1f MB' % (float(value) / 1024.0 / 1024.0)
+	else:
+		return '%.1f GB' % (float(value) / 1024.0 / 1024.0 / 1024.0)
