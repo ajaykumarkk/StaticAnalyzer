@@ -93,6 +93,7 @@ bad_sections = [bad for bad in section_names if bad not in good_sections]
 print(bad_sections)
 '''
 
+'''
 # Non-Ascii or empty section name check
 section_names = getsectionnames(path)
 for sec in section_names:
@@ -149,6 +150,7 @@ if pe.FILE_HEADER.IMAGE_FILE_RELOCS_STRIPPED:
 	print("This indicates that the file does not contain base relocations and must therefore be loaded at its preferred base address.\nFlag has the effect of disabling Address Space Layout Randomization(ASLR) for the process.")
 
 
-''' '''
+'''
+
 
 #print(pe.OPTIONAL_HEADER.SizeOfUninitializedData)
