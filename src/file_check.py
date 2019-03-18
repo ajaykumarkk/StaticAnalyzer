@@ -33,7 +33,7 @@ def execute_command(cmd):
 
 
 def check_exe(path):
-	execute_command("sigcheck64.exe -w res.txt -e " + path)
+	execute_command("src\\sigcheck64.exe -w res.txt -e " + path)
 	f = open("res.txt", "r")
 	if f.readlines()[1].find("Signed"):
 		return True
@@ -42,9 +42,8 @@ def check_exe(path):
 
 
 def check_descrip(path):
-	t = execute_command("sigcheck64.exe -e {} -nobanner ".format(path)).decode("utf-8")
+	t = execute_command("src\\sigcheck64.exe -e {} -nobanner ".format(path)).decode("utf-8")
 	list = t.replace("\t", "").splitlines()
-	print(len(list))
 	desc = list[5].split("Description:")[1]
 	if desc == 'n/a':
 		print("The file has no desription")

@@ -8,8 +8,16 @@ import peutils,sys,os
 from urllib.parse import urlparse
 from src.ip_reputaioncheck import *
 
-path = "D:\\SRC\\staticanalyzer\\samples\\strings64.exe"
+path = "D:\\SRC\\staticanalyzer\\samples\\u.exe"
 USERDB = "D:\\SRC\\staticanalyzer\\src\\userdb.txt"
+
+print("------ Signature Check  --------")
+if check_exe(path) == True:
+	print("Signature Vefified")
+else:
+	print("Not signed")
+
+check_descrip(path)
 
 print("--------- PEID(signature Matching) ----------")
 with open(USERDB, 'rt') as f:
@@ -39,8 +47,6 @@ for i in extract_url:
 
 print(ipv4reputation_list(ipv4))
 
-
-
 print("--------- Import function check  ----------")
 #IMPORT FUNC CHECK
 d=getsectionfunc("D:\\SRC\\staticanalyzer\\src\\u.exe")
@@ -61,7 +67,8 @@ if low_high_entropy:
 	print("Possibly Packed")
 	
 p = peutils.is_probably_packed(pe)
-print("is packed :"+str(p))
+if p is True:
+	print("is packed : True")
 
 
 print("--------- Section wise analysis  ----------")
@@ -111,7 +118,7 @@ if pe.FILE_HEADER.SizeOfOptionalHeader != 224:
 
 # Zero checksum check
 if pe.OPTIONAL_HEADER.CheckSum == 0:
-	print("[*] Header Checksum is zero!")
+	print("[*] Header Checksum is zero! - Non legitimate application")
 
 # Entry point check
 enaddr = pe.OPTIONAL_HEADER.AddressOfEntryPoint
@@ -137,20 +144,20 @@ if pe.FILE_HEADER.PointerToSymbolTable > 0:
 overlayOffset = pe.get_overlay_data_start_offset()
 raw = pe.write()
 if overlayOffset != None:
-	print("Overlay data is often associated with malware")
+	print("\nOverlay data is often associated with malware")
 	print(' Start offset: 0x%08x' % overlayOffset)
 	overlaySize = len(raw[overlayOffset:])
 	raw= pe.write()
 	print(' Size: 0x%08x %s %.2f%%' % (overlaySize, NumberOfBytesHumanRepresentation(overlaySize), float(overlaySize) / float(len(raw)) * 100.0))
 
-print("Malicious flag check...")
+print("\nMalicious flag check...")
 #malicious flags check
 if pe.FILE_HEADER.IMAGE_FILE_BYTES_REVERSED_LO:
 	print("Little endian: LSB precedes MSB in memory, deprecated and should be zero.")
 if pe.FILE_HEADER.IMAGE_FILE_BYTES_REVERSED_HI:
 	print("Big endian: MSB precedes LSB in memory, deprecated and should be zero.")
 if pe.FILE_HEADER.IMAGE_FILE_RELOCS_STRIPPED:
-	print("This indicates that the file does not contain base relocations and must therefore be loaded at its preferred base address.\nFlag has the effect of disabling Address Space Layout Randomization(ASLR) for the process.")
+	print("File does not contain base relocations and must therefore be loaded at its preferred base address.\nFlag has the effect of disabling Address Space Layout Randomization(ASLR) for the process.")
 
 
 print(pe.OPTIONAL_HEADER.SizeOfUninitializedData)
