@@ -61,7 +61,7 @@ if low_high_entropy:
 	print("Possibly Packed")
 	
 p = peutils.is_probably_packed(pe)
-print("is packed :"+p)
+print("is packed :"+str(p))
 
 
 print("--------- Section wise analysis  ----------")
