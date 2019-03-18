@@ -8,7 +8,7 @@ import peutils,sys,os
 from urllib.parse import urlparse
 from src.ip_reputaioncheck import *
 
-path = "D:\\SRC\\staticanalyzer\\samples\\u.exe"
+path = "D:\\SRC\\staticanalyzer\\samples\\strings64.exe"
 USERDB = "D:\\SRC\\staticanalyzer\\src\\userdb.txt"
 
 '''
@@ -20,14 +20,14 @@ matches = signatures.match_all(pe, ep_only = True)
 print(matches)
 '''
 
- #STRINGS
+''' #STRINGS
 extract_url,ipv4,ipv6,emails = extractIOC(path)
 
 print(extract_url)
 print(ipv4)
 print(ipv6)
 print(emails)
-'''
+
 
 
 maldomainslist = getmaldomains()
@@ -63,16 +63,18 @@ p = peutils.is_probably_packed(pe)
 print(p)
 '''
 
-'''
+
 #section wise anlysis
 section_data=section_analysis(path)
 for i in section_data.keys():
 	print(section_data[i])
-'''
-'''
+''''''
+
+
 #get packer details from section names
 section_names = []
 pe=pefile.PE(path)
+'''
 for i in pe.sections:
 	section_names.append(i.Name.strip(b"\x00").decode(errors='ignore').strip())
 	try:
@@ -148,9 +150,10 @@ if pe.FILE_HEADER.IMAGE_FILE_BYTES_REVERSED_HI:
 	print("Big endian: MSB precedes LSB in memory, deprecated and should be zero.")
 if pe.FILE_HEADER.IMAGE_FILE_RELOCS_STRIPPED:
 	print("This indicates that the file does not contain base relocations and must therefore be loaded at its preferred base address.\nFlag has the effect of disabling Address Space Layout Randomization(ASLR) for the process.")
-
-
 '''
 
 
-#print(pe.OPTIONAL_HEADER.SizeOfUninitializedData)
+print(pe.OPTIONAL_HEADER.SizeOfUninitializedData)
+if pe.OPTIONAL_HEADER.SizeOfUninitializedData > 1:
+	print("Possible malicious file has uninitialized data")
+

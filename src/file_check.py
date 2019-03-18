@@ -126,6 +126,10 @@ def section_analysis(path):
 		virtual_size = []
 		sec_name = section.Name.strip(b"\x00").decode(errors='ignore').strip()
 		section_names.append(sec_name)
+		if section.IMAGE_SCN_MEM_WRITE == True:
+			suspicious_str= suspicious_str + "This section is Writable(suspicious)"
+		if section.IMAGE_SCN_MEM_DISCARDABLE == True:
+			suspicious_str= suspicious_str + "This section is Discardable(suspicious)"
 		entropy = section.get_entropy()
 		if entropy < 1 or entropy > 7:
 			h_l_entropy = True
