@@ -8,7 +8,7 @@ import peutils,sys,os
 from urllib.parse import urlparse
 from src.ip_reputaioncheck import *
 
-path = "D:\\SRC\\staticanalyzer\\samples\\strings64.exe"
+path = "D:\\SRC\\staticanalyzer\\samples\\npp.7.6.Installer.exe"
 USERDB = "D:\\SRC\\staticanalyzer\\src\\userdb.txt"
 
 '''
@@ -63,12 +63,12 @@ p = peutils.is_probably_packed(pe)
 print(p)
 '''
 
-
+'''
 #section wise anlysis
 section_data=section_analysis(path)
 for i in section_data.keys():
 	print(section_data[i])
-''''''
+'''
 
 
 #get packer details from section names
@@ -156,4 +156,6 @@ if pe.FILE_HEADER.IMAGE_FILE_RELOCS_STRIPPED:
 print(pe.OPTIONAL_HEADER.SizeOfUninitializedData)
 if pe.OPTIONAL_HEADER.SizeOfUninitializedData > 1:
 	print("Possible malicious file has uninitialized data")
+
+check_dll(path)
 

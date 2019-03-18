@@ -25,7 +25,6 @@ def execute_command(cmd):
 	try:
 		p1 = Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 		output = p1.communicate()
-		print(output)
 		return output[0]
 	except Exception as e:
 		print(e)
@@ -54,17 +53,21 @@ def check_descrip(path):
 def check32bit(path):
 	t = execute_command("src\\sigcheck64.exe -e {} -nobanner ".format(path)).decode("utf-8")
 	list = t.replace("\t", "").splitlines()
-	if list[9].split("MachineType:") == '32-bit':
+	if list[9].split("MachineType:")[1] == '32-bit':
 		return True
 	return False
 
 
 def check_dll(path):
+	print(check32bit(path))
 	if check32bit(path):
-		execute_command('Siofra64.exe --mode file-scan -f "'+path+'" --enum-dependency --dll-hijack')
+		out = execute_command('src\\Siofra32.exe --mode file-scan -f "'+path+'" --enum-dependency --dll-hijack')
 	else:
 		print("64-Bit")
-
+		out = execute_command('src\\Siofra64.exe --mode file-scan -f "'+path+'" --enum-dependency --dll-hijack')
+	out=out.decode("utf-8").replace("\r\r","").split('\n')
+	for i in out:
+		print(i)
 
 
 def getsectionfunc(path):
@@ -127,9 +130,9 @@ def section_analysis(path):
 		sec_name = section.Name.strip(b"\x00").decode(errors='ignore').strip()
 		section_names.append(sec_name)
 		if section.IMAGE_SCN_MEM_WRITE == True:
-			suspicious_str= suspicious_str + "This section is Writable(suspicious)"
+			suspicious_str= suspicious_str + "This section is Writable(suspicious) "
 		if section.IMAGE_SCN_MEM_DISCARDABLE == True:
-			suspicious_str= suspicious_str + "This section is Discardable(suspicious)"
+			suspicious_str= suspicious_str + "This section is Discardable(suspicious) "
 		entropy = section.get_entropy()
 		if entropy < 1 or entropy > 7:
 			h_l_entropy = True
@@ -142,16 +145,16 @@ def section_analysis(path):
 				virtual_size.append((section.Name.decode(errors='ignore').strip(), section.Misc_VirtualSize))
 		if virtual_size:
 			for n, m in virtual_size:
-				suspicious_str = suspicious_str + 'SUSPICIOUS size of the section "{}" when stored in memory - {}'.format(n,m)
+				suspicious_str = suspicious_str + ' SUSPICIOUS size of the section "{}" when stored in memory - {}'.format(n,m)
 		if h_l_entropy:
-			suspicious_str = suspicious_str +"Very high or very low entropy means that file/section is compressed or encrypted since truly random data is not common."
+			suspicious_str = suspicious_str +" Very high or very low entropy means that file/section is compressed or encrypted since truly random data is not common."
 		if suspicious_size_of_raw_data:
-			suspicious_str = suspicious_str + "Suspicious size of the raw data raw data is Zero and Virtual Size is more than Zero"
+			suspicious_str = suspicious_str + " Suspicious size of the raw data raw data is Zero and Virtual Size is more than Zero"
 		if i != nsec -1:
 			nextp = pe.sections[i].SizeOfRawData + pe.sections[i].PointerToRawData
 			currp = pe.sections[i + 1].PointerToRawData
 			if nextp != currp:
-				suspicious_str = suspicious_str + "The Size Of Raw data is valued illegal! Binary might crash your disassembler/debugger"
+				suspicious_str = suspicious_str + " The Size Of Raw data is valued illegal! Binary might crash your disassembler/debugger"
 		section_info = {
 		"Section": sec_name,
 		"VirtualAddress": hex(section.VirtualAddress),
