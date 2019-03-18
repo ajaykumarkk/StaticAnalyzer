@@ -8,7 +8,7 @@ import peutils,sys,os
 from urllib.parse import urlparse
 from src.ip_reputaioncheck import *
 
-path = "D:\\SRC\\staticanalyzer\\samples\\npp.7.6.Installer.exe"
+path = "D:\\SRC\\staticanalyzer\\samples\\u.exe"
 USERDB = "D:\\SRC\\staticanalyzer\\src\\userdb.txt"
 
 '''
@@ -20,14 +20,14 @@ matches = signatures.match_all(pe, ep_only = True)
 print(matches)
 '''
 
-''' #STRINGS
+ #STRINGS
 extract_url,ipv4,ipv6,emails = extractIOC(path)
 
 print(extract_url)
 print(ipv4)
 print(ipv6)
 print(emails)
-
+'''
 
 
 maldomainslist = getmaldomains()

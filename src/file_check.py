@@ -25,6 +25,7 @@ def execute_command(cmd):
 	try:
 		p1 = Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 		output = p1.communicate()
+		print(output)
 		return output[0]
 	except Exception as e:
 		print(e)
@@ -51,7 +52,7 @@ def check_descrip(path):
 
 
 def check32bit(path):
-	t = execute_command("sigcheck64.exe -e {} -nobanner ".format(path)).decode("utf-8")
+	t = execute_command("src\\sigcheck64.exe -e {} -nobanner ".format(path)).decode("utf-8")
 	list = t.replace("\t", "").splitlines()
 	if list[9].split("MachineType:") == '32-bit':
 		return True
@@ -59,7 +60,11 @@ def check32bit(path):
 
 
 def check_dll(path):
-	pass
+	if check32bit(path):
+		execute_command('Siofra64.exe --mode file-scan -f "'+path+'" --enum-dependency --dll-hijack')
+	else:
+		print("64-Bit")
+
 
 
 def getsectionfunc(path):
@@ -163,7 +168,10 @@ def getsectionnames(path):
 
 def extractIOC(path):
 	extractor = URLExtract()
-	out = subprocess.check_output(['src//strings64.exe', '-a', path])
+	try:
+		out=execute_command('src\\floss64.exe '+path)
+	except:
+		out=execute_command('src\\strings64.exe '+path)
 	out = out.decode("utf-8").split('\n')
 	extract_url = []
 	ipv4 = []
