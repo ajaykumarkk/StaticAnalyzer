@@ -7,9 +7,13 @@ from src.file_check import *
 import peutils,sys,os
 from urllib.parse import urlparse
 from src.ip_reputaioncheck import *
+import time
 
 path = "D:\\SRC\\staticanalyzer\\samples\\u.exe"
 USERDB = "D:\\SRC\\staticanalyzer\\src\\userdb.txt"
+
+
+
 
 print("------ Signature Check  --------")
 
@@ -49,9 +53,10 @@ print("--------- Import function check  ----------")
 #IMPORT FUNC CHECK
 d=getsectionfunc("D:\\SRC\\staticanalyzer\\src\\u.exe")
 for t in d.items():
+	print(t[0]+"-->")
 	for fun in t[1]:
 		try:
-			print(t[0]+"-->"+fun+" : "+config.alerts[fun])
+			print("       "+fun+" : "+config.alerts[fun])
 		except:
 			pass
 

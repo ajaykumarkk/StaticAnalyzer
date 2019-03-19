@@ -59,17 +59,24 @@ def check32bit(path):
 
 
 def check_dll(path):
-	if check32bit(path):
-		print("32-Bit")
-		out = execute_command('src\\Siofra32.exe --mode file-scan -f "'+path+'" --enum-dependency --dll-hijack')
-		#print(out)
-	else:
-		print("64-Bit")
-		out = execute_command('src\\Siofra64.exe --mode file-scan -f "'+path+'" --enum-dependency --dll-hijack')
-	out=out.decode("utf-8").replace("\r\r","").split('\n')
-	for i in out:
-		print(i)
-
+	try:
+		out=""
+		if check32bit(path):
+			print("32-Bit")
+			out = execute_command('src\\Siofra32.exe --mode file-scan -f "'+path+'" --enum-dependency --dll-hijack')
+		else:
+			print("64-Bit")
+			out = execute_command('src\\Siofra64.exe --mode file-scan -f "'+path+'" --enum-dependency --dll-hijack')
+		out=out.decode("utf-8").replace("\r\r","").split('\n')
+		if out ==['']:
+			print("Error Trying again..")
+			time.sleep(3)
+			check_dll(path)
+		out.pop(0)
+		for i in out:
+			print(i)
+	except Exception as e:
+		print(e)
 
 def getsectionfunc(path):
 	file = pefile.PE(path)
@@ -177,7 +184,7 @@ def getsectionnames(path):
 def extractIOC(path):
 	extractor = URLExtract()
 	try:
-		out=execute_command('src\\floss64.exe '+path)
+		out=execute_command('src\\strings64.exe '+path)
 	except:
 		out=execute_command('src\\strings64.exe '+path)
 	out = out.decode("utf-8").split('\n')
