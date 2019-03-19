@@ -12,10 +12,9 @@ path = "D:\\SRC\\staticanalyzer\\samples\\u.exe"
 USERDB = "D:\\SRC\\staticanalyzer\\src\\userdb.txt"
 
 print("------ Signature Check  --------")
-if check_exe(path) == True:
-	print("Signature Vefified")
-else:
-	print("Not signed")
+
+print("Signature Exists : "+str(check_exe(path)))
+
 
 check_descrip(path)
 

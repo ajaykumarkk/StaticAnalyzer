@@ -33,9 +33,10 @@ def execute_command(cmd):
 
 
 def check_exe(path):
-	execute_command("src\\sigcheck64.exe -w res.txt -e " + path)
-	f = open("res.txt", "r")
-	if f.readlines()[1].find("Signed"):
+	t=execute_command("src\\sigcheck64.exe -e {} -nobanner".format(path)).decode("utf-8")
+	#f = open("res.txt", "r")
+	list = t.replace("\t", "").splitlines()
+	if list[1].split("Verified:")[1] == 'Signed':
 		return True
 	else:
 		return False
