@@ -124,12 +124,12 @@ def check_date(path):
 
 def section_analysis(path):
 	pe=pefile.PE(path)
-	h_l_entropy = False
-	suspicious_size_of_raw_data = False
 	section_names = []
 	sections = {}
 	nsec = pe.FILE_HEADER.NumberOfSections
 	for i in range(0,nsec):
+		h_l_entropy = False
+		suspicious_size_of_raw_data = False
 		if i == nsec:
 			break
 		section = pe.sections[i]
@@ -150,7 +150,7 @@ def section_analysis(path):
 		except:
 			if section.SizeOfRawData == 0 and section.Misc_VirtualSize > 0:
 				suspicious_size_of_raw_data = True
-				virtual_size.append((section.Name.decode(errors='ignore').strip(), section.Misc_VirtualSize))
+				virtual_size.append((sec_name, section.Misc_VirtualSize))
 		if virtual_size:
 			for n, m in virtual_size:
 				suspicious_str = suspicious_str + ' SUSPICIOUS size of the section "{}" when stored in memory - {}'.format(n,m)
@@ -184,7 +184,7 @@ def getsectionnames(path):
 def extractIOC(path):
 	extractor = URLExtract()
 	try:
-		out=execute_command('src\\strings64.exe '+path)
+		out=execute_command('src\\floss64.exe '+path)
 	except:
 		out=execute_command('src\\strings64.exe '+path)
 	out = out.decode("utf-8").split('\n')

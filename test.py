@@ -9,7 +9,7 @@ from urllib.parse import urlparse
 from src.ip_reputaioncheck import *
 import time
 
-path = "D:\\SRC\\staticanalyzer\\samples\\u.exe"
+path = "D:\\SRC\\staticanalyzer\\samples\\a.exe"
 USERDB = "D:\\SRC\\staticanalyzer\\src\\userdb.txt"
 
 
@@ -103,7 +103,7 @@ if number_of_section < 1 or number_of_section > 9:
 	print("Suspicious No.of Sections{} ".format(number_of_section))
 section_names=section_data.keys()
 bad_sections = [bad for bad in section_names if bad not in good_sections]
-print(bad_sections)
+print("Unknown Sections : "+str(bad_sections))
 
 
 
