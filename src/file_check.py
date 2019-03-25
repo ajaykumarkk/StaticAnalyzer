@@ -48,6 +48,7 @@ def check_descrip(path):
 	desc = list[5].split("Description:")[1]
 	if desc == 'n/a':
 		return "The file has no desription"
+	return "Decription : True"
 
 
 def check32bit(path):
@@ -73,8 +74,7 @@ def check_dll(path):
 			time.sleep(3)
 			check_dll(path)
 		out.pop(0)
-		for i in out:
-			print(i)
+		return out
 	except Exception as e:
 		print(e)
 
