@@ -47,7 +47,7 @@ def check_descrip(path):
 	list = t.replace("\t", "").splitlines()
 	desc = list[5].split("Description:")[1]
 	if desc == 'n/a':
-		print("The file has no desription")
+		return "The file has no desription"
 
 
 def check32bit(path):
@@ -184,7 +184,7 @@ def getsectionnames(path):
 def extractIOC(path):
 	extractor = URLExtract()
 	try:
-		out=execute_command('src\\floss64.exe '+path)
+		out=execute_command('src\\strings64.exe '+path)
 	except:
 		out=execute_command('src\\strings64.exe '+path)
 	out = out.decode("utf-8").split('\n')

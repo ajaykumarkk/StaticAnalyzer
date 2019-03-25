@@ -19,7 +19,7 @@ print("------ Signature Check  --------")
 
 print("Signature Exists : "+str(check_exe(path)))
 
-check_descrip(path)
+print(check_descrip(path))
 
 print("--------- PEID(signature Matching) ----------")
 with open(USERDB, 'rt') as f:
